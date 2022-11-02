@@ -1,7 +1,6 @@
 import pyttsx3
 import speech_recognition as sr
 from functions import request_error, listen_a_command, check_command
-
 engine = pyttsx3.init()
 
 
