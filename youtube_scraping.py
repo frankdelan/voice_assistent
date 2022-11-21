@@ -1,15 +1,24 @@
-from selenium import webdriver
 from selenium.webdriver import Keys
 from selenium.webdriver.common.by import By
-from selenium.webdriver.chrome.options import Options
+from functions import open_driver
 from time import sleep
 
 
 def search_video(driver, title):
     """Enter a search field and submit"""
-    input_element = driver.find_element(By.ID, 'center').find_element(By.ID, 'search-form').find_element(By.TAG_NAME,                                                                             'input')
+    input_element = driver.find_element(By.ID, 'center').find_element(By.ID, 'search-form').find_element(By.TAG_NAME,
+                                                                                                         'input')
     input_element.send_keys(title)
     input_element.send_keys(Keys.ENTER)
+
+
+def check_current_link(driver, contents, video_num):
+    """Check current link and if it changes close the browser"""
+    while True:  # loop for playing video before link changes
+        video_url = driver.current_url
+        is_link_change = video_url != contents[video_num].get_attribute('href')
+        if is_link_change:
+            return False
 
 
 def play_video(driver, video_num):
@@ -26,10 +35,7 @@ def play_video(driver, video_num):
 
 def scrap_youtube(title, video_num):
     """Scraping youtube and play video"""
-    options = Options()
-    options.add_argument("--start-maximized")
-    driver = webdriver.Chrome(options=options)
-    driver.get('https://www.youtube.com/')
+    driver = open_driver('https://www.youtube.com/')
 
     driver.implicitly_wait(10)
 
@@ -38,13 +44,4 @@ def scrap_youtube(title, video_num):
 
     sleep(2)
 
-    while True:  # loop for playing video before link changes
-        video_url = driver.current_url
-        if video_url == contents[video_num].get_attribute('href'):
-            pass
-        else:
-            return False
-
-
-if __name__ == "__main__":
-    scrap_youtube()
+    check_current_link(driver, contents, video_num)

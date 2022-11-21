@@ -6,10 +6,26 @@ from youtube_scraping import scrap_youtube
 from mail_scraping import scrap_mail
 from commands_list import commands
 from config import receivers, data
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
 
 engine = pyttsx3.init()
 engine.setProperty('rate', 270)
 r = sr.Recognizer()
+
+
+def open_driver(link):
+    options = Options()
+    options.add_argument("--start-maximized")  # full-screen with borders
+    driver = webdriver.Chrome(options=options)
+    driver.get(link)
+    return driver
+
+
+def ask_question(question):
+    """Function for asking a question"""
+    engine.say(question)
+    engine.runAndWait()
 
 
 def listen_a_command():
@@ -47,34 +63,37 @@ def close_assistent():
 
 def unknown_value():
     """Undefined phrase"""
-    engine.say('Я не поняла что ты сказал!')
+    ask_question('Я не поняла что ты сказал!')
 
 
 def request_error():
     """Function which calls when RequestError"""
-    engine.say('Произошла ошибка в запросе!')
+    ask_question('Произошла ошибка в запросе!')
 
 
 def open_browser():
-    """Functions for browser's opening"""
+    """Functions for opening browser"""
     webbrowser.open('https://www.google.ru/', new=2, autoraise=True)
-    engine.say('Браузер открыт!')
+    ask_question('Браузер открыт!')
 
 
 def open_youtube():
     """Function for playing youtube video"""
-    engine.say('Какое видео вы хотите посмотреть?')
-    engine.runAndWait()
+    ask_question('Какое видео вы хотите посмотреть?')
+
     try:
         task = listen_a_command()
     except sr.UnknownValueError:
         unknown_value()
         return False
-    engine.say('Назовите номер видео от одного до десяти:')
-    engine.runAndWait()
+
+    ask_question('Назовите номер видео от одного до десяти:')
+
     try:
         video_num = listen_a_command()
-        if int(video_num) <= 0 or int(video_num) > 10:
+        is_correct_number = int(video_num) >= 0 or int(video_num) <= 10
+
+        if not is_correct_number:
             unknown_value()
             return False
 
@@ -91,19 +110,21 @@ def open_youtube():
 
 def write_a_mail():
     """Function for write a letter by @mail.ru"""
-    engine.say('Кому вы хотите написать письмо?')
-    engine.runAndWait()
+    ask_question('Кому вы хотите написать письмо?')
+
     try:
         receiver = listen_a_command()
         mail = check_receiver(receiver)
     except sr.UnknownValueError:
         unknown_value()
         return False
-    engine.say('Скажите, что вы хотите написать')
-    engine.runAndWait()
+
+    ask_question('Скажите, что вы хотите написать')
+
     try:
         text = listen_a_command()
     except sr.UnknownValueError:
         unknown_value()
         return False
+
     scrap_mail(data['login'], data['password'], mail, text)
