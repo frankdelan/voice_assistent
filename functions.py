@@ -2,19 +2,21 @@ import sys
 import pyttsx3
 import webbrowser
 import speech_recognition as sr
+from selenium.webdriver.chrome.webdriver import WebDriver
+
 from youtube_scraping import scrap_youtube
 from mail_scraping import scrap_mail
 from commands_list import commands
 from config import receivers, data
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
+from main import engine
 
-engine = pyttsx3.init()
 engine.setProperty('rate', 270)
 r = sr.Recognizer()
 
 
-def open_driver(link):
+def open_driver(link) -> WebDriver:
     options = Options()
     options.add_argument("--start-maximized")  # full-screen with borders
     driver = webdriver.Chrome(options=options)
@@ -28,15 +30,15 @@ def ask_question(question):
     engine.runAndWait()
 
 
-def listen_a_command():
+def listen_a_command() -> str:
     """Function for listening"""
     with sr.Microphone() as source:
         r.adjust_for_ambient_noise(source, 0.5)
-        audio = r.listen(source)
+        audio: sr.AudioData = r.listen(source)
     return r.recognize_google(audio, language='ru')
 
 
-def check_command(query):
+def check_command(query: str):
     """Function which checks values in dictionary"""
     for k, v in commands.items():
         if query.lower() in v:
@@ -46,7 +48,7 @@ def check_command(query):
         unknown_value()
 
 
-def check_receiver(receiver):
+def check_receiver(receiver) -> str | bool:
     """Function which checks values in dictionary"""
     for k, v in receivers.items():
         if receiver.lower() in v:
@@ -77,12 +79,12 @@ def open_browser():
     ask_question('Браузер открыт!')
 
 
-def open_youtube():
+def open_youtube() -> bool:
     """Function for playing youtube video"""
     ask_question('Какое видео вы хотите посмотреть?')
 
     try:
-        task = listen_a_command()
+        task: str = listen_a_command()
     except sr.UnknownValueError:
         unknown_value()
         return False
@@ -90,8 +92,8 @@ def open_youtube():
     ask_question('Назовите номер видео от одного до десяти:')
 
     try:
-        video_num = listen_a_command()
-        is_correct_number = int(video_num) >= 0 or int(video_num) <= 10
+        video_num: str = listen_a_command()
+        is_correct_number: bool = int(video_num) in range(0, 11)
 
         if not is_correct_number:
             unknown_value()
@@ -108,13 +110,13 @@ def open_youtube():
         return False
 
 
-def write_a_mail():
+def write_a_mail() -> bool:
     """Function for write a letter by @mail.ru"""
     ask_question('Кому вы хотите написать письмо?')
 
     try:
-        receiver = listen_a_command()
-        mail = check_receiver(receiver)
+        receiver: str = listen_a_command()
+        mail: str = check_receiver(receiver)
     except sr.UnknownValueError:
         unknown_value()
         return False
@@ -122,9 +124,9 @@ def write_a_mail():
     ask_question('Скажите, что вы хотите написать')
 
     try:
-        text = listen_a_command()
+        text: str = listen_a_command()
     except sr.UnknownValueError:
         unknown_value()
         return False
 
-    scrap_mail(data['login'], data['password'], mail, text)
+    scrap_mail(data, mail, text)
