@@ -1,5 +1,4 @@
 .idea
 __pycache__
 build
-chromedriver.exe
 config.py
