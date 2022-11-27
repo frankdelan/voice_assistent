@@ -7,7 +7,7 @@ from selenium.webdriver.common.by import By
 import time
 
 
-def sign_in(driver, login, password):
+def sign_in(driver: WebDriver, login: str, password: str) -> None:
     """Login to @mail.ru service"""
     frame: WebElement = driver.find_element(By.CSS_SELECTOR, 'iframe')
     driver.switch_to.frame(frame)
@@ -22,14 +22,14 @@ def sign_in(driver, login, password):
     driver.switch_to.default_content()
 
 
-def write_a_letter(driver, mail, text):
+def write_a_letter(driver: WebDriver, mail: str, text: str) -> None:
     """Find elements for enter receiver and text"""
     new_window: str = driver.current_url
     driver.get(new_window)
 
     letter_btn: WebElement = driver.find_element(By.CSS_SELECTOR,
-                                       '.compose-button.compose-button_white.compose-button_base'
-                                            '.compose-button_with-dropdown.js-shortcut')
+                                                 '.compose-button.compose-button_white.compose-button_base'
+                                                 '.compose-button_with-dropdown.js-shortcut')
 
     driver.execute_script("arguments[0].click();", letter_btn)
 
@@ -43,18 +43,19 @@ def write_a_letter(driver, mail, text):
     time.sleep(3)
 
 
-def get_popup_mail_field(driver) -> WebElement:
+def get_popup_mail_field(driver: WebDriver) -> WebElement:
     popup_mail: WebElement = driver.find_element(By.CSS_SELECTOR, '.container--H9L5q.size_s--3_M-_')
     return popup_mail
 
 
-def get_popup_text_field(driver) -> WebElement:
+def get_popup_text_field(driver: WebDriver) -> WebElement:
     popup_text: WebElement = driver.find_element(By.CSS_SELECTOR, '.container--2Rl8H')
-    outer_div: WebElement = popup_text.find_elements(By.TAG_NAME, 'div')[0].find_element(By.XPATH, '//div[@role="textbox"]')
+    outer_div: WebElement = popup_text.find_elements(By.TAG_NAME, 'div')[0].find_element(By.XPATH,
+                                                                                         '//div[@role="textbox"]')
     return outer_div
 
 
-def scrap_mail(data: dict, mail: str, text: str):
+def scrap_mail(data: dict, mail: str, text: str) -> None:
     """Scraping mail and sending letter"""
     driver: WebDriver = open_driver('https://e.mail.ru/login')
 
