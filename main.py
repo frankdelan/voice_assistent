@@ -1,10 +1,7 @@
-import pyttsx3
+
 import speech_recognition as sr
-from pyttsx3 import Engine
 
 from functions import request_error, listen_a_command, check_command
-
-engine: Engine = pyttsx3.init()
 
 
 def main():

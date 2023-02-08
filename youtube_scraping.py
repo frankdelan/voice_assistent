@@ -2,9 +2,18 @@ from selenium.webdriver import Keys
 from selenium.webdriver.chrome.webdriver import WebDriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webelement import WebElement
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
 
-from functions import open_driver
 from time import sleep
+
+
+def open_driver(link) -> WebDriver:
+    options = Options()
+    options.add_argument("--start-maximized")  # full-screen with borders
+    driver = webdriver.Chrome(options=options)
+    driver.get(link)
+    return driver
 
 
 def search_video(driver: WebDriver, title: str):

@@ -2,26 +2,16 @@ import sys
 import pyttsx3
 import webbrowser
 import speech_recognition as sr
-from selenium.webdriver.chrome.webdriver import WebDriver
 
 from youtube_scraping import scrap_youtube
 from mail_scraping import scrap_mail
 from commands_list import commands
 from config import receivers, data
-from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
-from main import engine
+
+engine = pyttsx3.init()
 
 engine.setProperty('rate', 270)
 r = sr.Recognizer()
-
-
-def open_driver(link) -> WebDriver:
-    options = Options()
-    options.add_argument("--start-maximized")  # full-screen with borders
-    driver = webdriver.Chrome(options=options)
-    driver.get(link)
-    return driver
 
 
 def ask_question(question):

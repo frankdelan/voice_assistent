@@ -1,11 +1,18 @@
 from selenium.webdriver.chrome.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement
-
-from functions import open_driver
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
 from selenium.webdriver import Keys
 from selenium.webdriver.common.by import By
 import time
 
+
+def open_driver(link) -> WebDriver:
+    options = Options()
+    options.add_argument("--start-maximized")  # full-screen with borders
+    driver = webdriver.Chrome(options=options)
+    driver.get(link)
+    return driver
 
 def sign_in(driver: WebDriver, login: str, password: str) -> None:
     """Login to @mail.ru service"""
